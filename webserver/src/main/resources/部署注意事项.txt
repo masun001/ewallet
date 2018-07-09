@@ -1,0 +1,19 @@
+1.application.properties 数据库/redis配置
+2.base.properties 配置
+3.配置完即可打包运行
+
+
+一：目录介绍
+    controller --> 批量创建合同
+    dao        --> 数据库Dao层
+    email      --> 邮件发送服务类
+    entity      --> 数据库表映射实体类，也存在其他服务bean
+    enums       --> 状态及其他枚举
+    eth         --> 以太坊及合约部署目录
+    interceptor --> 拦截器，目前没做任何处理
+    redis       --> redis接口
+    res         --> 监听返回对象
+    service     --> 数据库服务接口
+    task        --> 汇总用户钱包到冷钱包任务以及提币任务
+    util        -->工具类
+    walletManage    --> 钱包管理入库

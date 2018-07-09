@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.morningtech.eth.server.dao.impl.SysEthMentionMapper">
+  <resultMap id="BaseResultMap" type="SysEthMention">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="userid" jdbcType="INTEGER" property="userid" />
+    <result column="username" jdbcType="VARCHAR" property="username" />
+    <result column="coinname" jdbcType="VARCHAR" property="coinname" />
+    <result column="mentionaddress" jdbcType="VARCHAR" property="mentionaddress" />
+    <result column="num" jdbcType="DECIMAL" property="num" />
+    <result column="addtime" jdbcType="TIMESTAMP" property="addtime" />
+    <result column="endtime" jdbcType="TIMESTAMP" property="endtime" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="hash" jdbcType="VARCHAR" property="hash" />
+    <result column="isblock" jdbcType="INTEGER" property="isblock"/>
+  </resultMap>
+  <sql id="Base_Column_List">
+    id, userid, username, coinname, txid, num, fee, mum, sort, addtime, endtime, status, 
+    ishand
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select
+    <include refid="Base_Column_List" />
+    from sys_eth_mention
+    where id = #{id,jdbcType=INTEGER}
+  </select>
+
+  <insert id="insertSelective" parameterType="SysEthMention">
+    insert into sys_eth_mention
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="userid != null">
+        userid,
+      </if>
+      <if test="username != null">
+        username,
+      </if>
+      <if test="coinname != null">
+        coinname,
+      </if>
+      <if test="num != null">
+        num,
+      </if>
+      <if test="addtime != null">
+        addtime,
+      </if>
+      <if test="endtime != null">
+        endtime,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="hash != null">
+        hash,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="userid != null">
+        #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="username != null">
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="coinname != null">
+        #{coinname,jdbcType=VARCHAR},
+      </if>
+      <if test="num != null">
+        #{num,jdbcType=DECIMAL},
+      </if>
+      <if test="addtime != null">
+        #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endtime != null">
+        #{endtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="hash != null">
+        #{hash,jdbcType=TINYINT},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="SysEthMention">
+    update sys_eth_mention
+    <set>
+      <if test="userid != null">
+        userid = #{userid,jdbcType=INTEGER},
+      </if>
+      <if test="username != null">
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="coinname != null">
+        coinname = #{coinname,jdbcType=VARCHAR},
+      </if>
+      <if test="num != null">
+        num = #{num,jdbcType=DECIMAL},
+      </if>
+      <if test="addtime != null">
+        addtime = #{addtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="endtime != null">
+        endtime = #{endtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="hash != null">
+        hash = #{hash,jdbcType=VARCHAR},
+      </if>
+      <if test="islock!=null">
+        islock = #{islock,jdbcType=INTEGER},
+      </if>
+      <if test="remark!=null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+    </set>
+    where id = #{id,jdbcType=INTEGER}
+  </update>
+
+  <!--查询等待提币的所有记录-->
+  <select id="findPeddingTibList" resultType="SysEthMention">
+     SELECT  *  FROM  sys_eth_mention WHERE  status=4 AND  isdeleted=0 AND islock=0  LIMIT 10
+  </select>
+
+  <!--查询等待交易成功的提币记录-->
+  <select id="findTransactionPeddingList" resultType="SysEthMention">
+     SELECT  *  FROM  sys_eth_mention WHERE  status=4 AND isdeleted=0 AND islock=1 AND hash IS NOT  NULL
+  </select>
+
+  <update id="updateSysEthMentionLock">
+      UPDATE  sys_eth_mention
+      <set>
+        <if test="islock!=null">
+          islock=#{islock},
+        </if>
+        <if test="remark!=null">
+          remark = #{remark},
+        </if>
+        <if test="locktime!=null">
+          locktime = #{locktime},
+        </if>
+      </set>
+      WHERE id = #{id} AND islock=0
+  </update>
+
+  <!--重置中断任务,重新开始-->
+  <update id="updateSysEthMentionReset">
+      UPDATE sys_eth_mention SET islock=0,remark=null WHERE status=4 AND isdeleted=0 AND islock=1 AND hash IS NULL
+  </update>
+
+  <update id="updateSysEthMentionUnLock">
+    UPDATE  sys_eth_mention SET
+    <if test="remark!=null">remark=#{remark},</if>
+    <if test="remark==null">remark=null,</if>
+    islock=0,locktime=null,status=4
+    WHERE id = #{id} AND islock=1 AND hash IS NULL
+  </update>
+</mapper>

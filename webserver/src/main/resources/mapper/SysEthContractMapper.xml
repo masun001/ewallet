@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.morningtech.eth.server.dao.impl.SysEthContractMapper">
+  <resultMap id="BaseResultMap" type="SysEthContract">
+    <id column="id" jdbcType="INTEGER" property="id" />
+
+  </resultMap>
+
+  <!--查询Eth及合约配置列表-->
+  <select id="findEthAndContractList" resultType="SysEthContract">
+      SELECT  *  FROM  sys_eth_contract
+      <where>
+        status = 1
+        <if test="id!=null">
+          AND id>#{id}
+        </if>
+      </where>
+      ORDER BY id ASC
+  </select>
+
+    <!--根据coinname查询合约配置-->
+  <select id="findEthContractConfig" resultType="SysEthContract">
+     SELECT  *  FROM  sys_eth_contract WHERE status =1 AND coinname=#{coinname}
+  </select>
+
+</mapper>

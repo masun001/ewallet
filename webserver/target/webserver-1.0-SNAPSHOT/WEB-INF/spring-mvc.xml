@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc" xmlns:task="http://www.springframework.org/schema/task"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                        http://www.springframework.org/schema/beans/spring-beans-3.1.xsd
+                        http://www.springframework.org/schema/context
+                        http://www.springframework.org/schema/context/spring-context-3.1.xsd
+                        http://www.springframework.org/schema/mvc
+                        http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd">
+    <!-- 自动扫描该包，使SpringMVC认为包下用了@controller注解的类是控制器 -->
+    <context:component-scan base-package="com.morningtech.eth.server" >
+        <context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+    </context:component-scan>
+
+    <!-- 引入配置文件 -->
+    <bean id="propertyConfigurer"
+          class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <!--<property name="location" value="classpath:application.properties" />-->
+        <property name="locations">
+            <list>
+                <value>file:/eth/config/application.properties</value>
+                <value>file:/eth/config/base.properties</value>
+            </list>
+        </property>
+    </bean>
+
+    <!-- 激活注解 -->
+    <context:annotation-config />
+    <!-- 扩展驱动，让请求可以进入到某个controller的方法中 -->
+    <mvc:annotation-driven>
+        <mvc:message-converters>
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>application/json;charset=UTF-8</value>
+                        <value>text/plain;charset=UTF-8</value>
+                        <value>text/html;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+            <ref bean="mappingJacksonHttpMessageConverter" />
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+
+    <!--避免IE执行AJAX时，返回JSON出现下载文件 同： @JsonSerialize(include=JsonSerialize.Inclusion.NON_NULL)代替 -->
+    <bean id="mappingJacksonHttpMessageConverter"
+          class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+        <property name="supportedMediaTypes">
+            <list>
+                <value>application/json;charset=UTF-8</value>
+            </list>
+        </property>
+        <!--处理对象属性null-->
+        <property name="objectMapper">
+            <bean class="com.fasterxml.jackson.databind.ObjectMapper">
+                <!-- 处理responseBody 里面日期类型 -->
+                <!--<property name="dateFormat">-->
+                    <!--<bean class="java.text.SimpleDateFormat">-->
+                        <!--<constructor-arg type="java.lang.String" value="yyyy-MM-dd HH:mm:ss" />-->
+                    <!--</bean>-->
+                <!--</property>-->
+                <!-- 为null字段时不显示 -->
+                <property name="serializationInclusion">
+                    <value type="com.fasterxml.jackson.annotation.JsonInclude.Include">NON_NULL</value>
+                </property>
+            </bean>
+        </property>
+    </bean>
+    <!-- 启动SpringMVC的注解功能，完成请求和注解POJO的映射 -->
+    <bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
+        <property name="messageConverters">
+            <list>
+                <ref bean="mappingJacksonHttpMessageConverter" /> <!-- JSON转换器 -->
+                <bean class="org.springframework.http.converter.ByteArrayHttpMessageConverter" />
+            </list>
+        </property>
+    </bean>
+
+    <!-- 拦截器配置 -->
+    <mvc:interceptors>
+        <!--客户端基础信息处理-->
+        <mvc:interceptor>
+            <mvc:mapping path="/**"/>
+            <bean class="com.morningtech.eth.server.interceptor.HttpInterceptor">
+            </bean>
+        </mvc:interceptor>
+    </mvc:interceptors>
+
+
+    <!-- 定义跳转的文件的前后缀 ，视图模式配置-->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <!-- 这里的配置我的理解是自动给后面action的方法return的字符串加上前缀和后缀，变成一个 可用的url地址 -->
+        <property name="prefix" value="/WEB-INF/view/" />
+        <property name="suffix" value=".jsp" />
+    </bean>
+
+    <bean id="transferMentionCoinManage" class="com.morningtech.eth.server.task.TransferMentionCoinManage"></bean>
+
+    <!--ETH项目启动入口-->
+    <bean id="WalletService" class="com.morningtech.eth.server.WalletService" init-method="init"></bean>
+
+    <!-- 开启这个配置，spring才能识别@Scheduled注解   -->
+    <task:annotation-driven scheduler="qbScheduler" mode="proxy"/>
+    <task:scheduler id="qbScheduler" pool-size="10"/>
+
+    <task:scheduled-tasks>
+     <!--每分钟执行一次提币任务-->
+    <task:scheduled ref="transferMentionCoinManage"  method="scheduledTransferUserTask" cron="0 */1 * * * ?" />
+    <!--每十秒检测一次转出的hash状态-->
+    <task:scheduled ref="transferMentionCoinManage"  method="scheduledCheckTranstionHashStatusTask"  cron="*/10 * * * * ?" />
+
+</task:scheduled-tasks>
+</beans>

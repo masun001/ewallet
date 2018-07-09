@@ -1,0 +1,261 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.morningtech.eth.server.dao.impl.SysEthTransferMapper">
+  <resultMap id="BaseResultMap" type="SysEthTransfer">
+    <id column="id" jdbcType="INTEGER" property="id" />
+    <result column="coinName" jdbcType="VARCHAR" property="coinname" />
+    <result column="from" jdbcType="VARCHAR" property="from" />
+    <result column="to" jdbcType="VARCHAR" property="to" />
+    <result column="contractAddress" jdbcType="VARCHAR" property="contractaddress" />
+    <result column="value" jdbcType="BIGINT" property="value" />
+    <result column="transactionHash" jdbcType="VARCHAR" property="transactionhash" />
+    <result column="gasUsed" jdbcType="BIGINT" property="gasused" />
+    <result column="sysTime" jdbcType="TIMESTAMP" property="systime" />
+    <result column="pendingTime" jdbcType="TIMESTAMP" property="pendingtime" />
+    <result column="transTime" jdbcType="TIMESTAMP" property="transtime" />
+    <result column="status" jdbcType="INTEGER" property="status" />
+    <result column="tranSign" jdbcType="VARCHAR" property="transign" />
+    <result column="isDeleted" jdbcType="INTEGER" property="isdeleted" />
+  </resultMap>
+
+  <insert id="insertSelective" parameterType="SysEthTransfer">
+    insert into sys_eth_transfer
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        id,
+      </if>
+      <if test="coinname != null">
+        coinName,
+      </if>
+      <if test="from != null">
+        `from`,
+      </if>
+      <if test="to != null">
+        `to`,
+      </if>
+      <if test="contractaddress != null">
+        contractAddress,
+      </if>
+      <if test="value != null">
+        `value`,
+      </if>
+      <if test="eth != null">
+        `eth`,
+      </if>
+      <if test="gas != null">
+        `gas`,
+      </if>
+      <if test="blocknumber != null">
+        blockNumber,
+      </if>
+      <if test="transactionhash != null">
+        transactionHash,
+      </if>
+      <if test="gasused != null">
+        gasUsed,
+      </if>
+      <if test="systime != null">
+        sysTime,
+      </if>
+      <if test="pendingtime != null">
+        pendingtime,
+      </if>
+      <if test="transtime != null">
+        transTime,
+      </if>
+      <if test="status != null">
+        status,
+      </if>
+      <if test="transign != null">
+        tranSign,
+      </if>
+      <if test="remark != null">
+        remark,
+      </if>
+      <if test="isdeleted != null">
+        isDeleted,
+      </if>
+      <if test="transtype !=null ">
+        transtype,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="id != null">
+        #{id,jdbcType=INTEGER},
+      </if>
+      <if test="coinname != null">
+        #{coinname,jdbcType=VARCHAR},
+      </if>
+      <if test="from != null">
+        #{from,jdbcType=VARCHAR},
+      </if>
+      <if test="to != null">
+        #{to,jdbcType=VARCHAR},
+      </if>
+      <if test="contractaddress != null">
+        #{contractaddress,jdbcType=VARCHAR},
+      </if>
+      <if test="value != null">
+        #{value,jdbcType=BIGINT},
+      </if>
+      <if test="eth != null">
+        #{eth,jdbcType=DECIMAL},
+      </if>
+      <if test="gas != null">
+        #{gas, jdbcType=DECIMAL},
+      </if>
+      <if test="blocknumber != null">
+        #{blocknumber,jdbcType=VARCHAR},
+      </if>
+      <if test="transactionhash != null">
+        #{transactionhash,jdbcType=VARCHAR},
+      </if>
+      <if test="gasused != null">
+        #{gasused,jdbcType=BIGINT},
+      </if>
+      <if test="systime != null">
+        #{systime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="pendingtime != null">
+        #{pendingtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="transtime != null">
+        #{transtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="status != null">
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="transign != null">
+        #{transign,jdbcType=VARCHAR},
+      </if>
+      <if test="remark != null">
+        #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="isdeleted != null">
+        #{isdeleted,jdbcType=INTEGER},
+      </if>
+      <if test="transtype !=null ">
+        #{transtype, jdbcType=VARCHAR},
+      </if>
+    </trim>
+  </insert>
+
+  <sql id="updateStr">
+    <set>
+      <if test="contractaddress != null">
+        contractAddress = #{contractaddress,jdbcType=VARCHAR},
+      </if>
+      <if test="blocknumber != null">
+        blockNumber = #{blocknumber,jdbcType=VARCHAR},
+      </if>
+      <if test="transactionhash != null">
+        transactionHash = #{transactionhash,jdbcType=VARCHAR},
+      </if>
+      <if test="gasused != null">
+        gasUsed = #{gasused,jdbcType=BIGINT},
+      </if>
+      <if test="transtime != null">
+        transTime = #{transtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="pendingtime != null">
+        pendingTime = #{pendingtime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="transmaintime != null">
+        transMainTime = #{transmaintime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="remark != null">
+        remark = #{remark,jdbcType=VARCHAR},
+      </if>
+      <if test="status != null">
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="transign != null">
+        tranSign = #{transign,jdbcType=VARCHAR},
+      </if>
+      <if test="tranStatus!=null">
+        tranStatus = #{tranStatus,jdbcType=INTEGER},
+      </if>
+      <if test="outTransactionHash!=null">
+        outTransactionHash= #{outTransactionHash,jdbcType=VARCHAR},
+      </if>
+      <if test="isdeleted != null">
+        isDeleted = #{isdeleted,jdbcType=INTEGER},
+      </if>
+      <if test="transtype!=null">
+        transtype= #{transtype},
+      </if>
+      <if test="gas !=null">
+        gas  = #{gas},
+      </if>
+    </set>
+  </sql>
+  <update id="updateByTransfer" parameterType="SysEthTransfer">
+    update sys_eth_transfer
+    <include refid="updateStr"></include>
+    where `from` = #{from} AND `to`=#{to} AND `value`=#{value} AND transactionhash IS NULL ORDER BY  id desc limit 1
+  </update>
+
+  <update id="updateByTransactionHash" parameterType="SysEthTransfer">
+    update sys_eth_transfer
+    <include refid="updateStr"></include>
+    where transactionhash=#{transactionhash}
+  </update>
+
+  <update id="updateByOutTransactionHash" parameterType="SysEthTransfer">
+    update sys_eth_transfer
+    <include refid="updateStr"></include>
+    where outTransactionHash=#{outTransactionHash}
+  </update>
+
+  <update id="updateBatchByTransactionHash" parameterType="java.util.List">
+    <foreach collection="list" item="item" index="index" open="" close=";" separator=";">
+      UPDATE sys_eth_transfer
+      <set>
+        <if test="item.outTransactionHash!=null and item.outTransactionHash!='' ">outTransactionHash=#{item.outTransactionHash},</if>
+        <if test="item.tranStatus!=null and item.tranStatus!='' ">tranStatus=#{item.tranStatus},</if>
+        <if test="item.remark!=null and item.remark!='' ">remark=#{item.remark},</if>
+        <if test="item.transmaintime!=null">transmaintime=#{item.transmaintime},</if>
+        <if test="item.gas!=null">gas=#{item.gas},</if>
+      </set>
+      where transactionhash=#{item.transactionhash}
+    </foreach>
+  </update>
+
+  <select id="findSysEthTransferByTransactionHash" resultType="SysEthTransfer">
+    SELECT * FROM  sys_eth_transfer WHERE transactionHash=#{transactionhash }
+  </select>
+
+  <!--成功到账未修改coin的记录-->
+  <select id="findSysEthTransferFinishList" resultType="SysEthTransfer">
+    SELECT * FROM  sys_eth_transfer WHERE status=2 AND isDeleted=0
+  </select>
+
+  <!--查询未确认的归集hash列表-->
+  <select id="findSysEthTransferOutPeddingList" resultType="SysEthTransfer">
+     SELECT * FROM  sys_eth_transfer WHERE  outTransactionHash IS NOT NULL AND tranStatus!=3
+  </select>
+
+  <!--未转入到主账户的列表-->
+  <select id="findSysEthTransferNoToMainList" resultType="WalletUser">
+    <![CDATA[
+     SELECT A.transId,A.transactionHash,A.accountId,B.keystorePath,B.password,A.coinName,A.valueWei,A.valueEther,A.tranStatus FROM (
+          SELECT  `to` accountId,coinname,sum(eth) valueEther,sum(value) valueWei,GROUP_CONCAT(id) transId,GROUP_CONCAT(DISTINCT(transactionHash)) transactionHash,GROUP_CONCAT(DISTINCT(tranStatus)) tranStatus
+          FROM sys_eth_transfer WHERE status=2 AND tranStatus IN (0,1) AND MD5(CONCAT(`from`,",",`to`,",",`value`,",",transactionHash))=tranSign
+          GROUP BY `to`,coinname
+      ) A,sys_wallet_account B,sys_wallet_option C
+      WHERE A.accountId=B.accountId AND A.coinName=C.coinname AND A.valueEther>=C.minethlimit AND ( C.opentime<=NOW() OR (C.isopen=1 AND C.opentime IS NULL) )
+      ORDER BY A.accountId
+   ]]>
+
+  </select>
+
+  <!--执行自动入账存储过程-->
+  <parameterMap type="java.util.Map" id="transferMap">
+    <parameter property="id" mode="IN" jdbcType="INTEGER"/>
+  </parameterMap>
+  <select id="executeTransferAutoAddCoin" parameterMap="transferMap"  statementType="CALLABLE">
+      CALL pro_auto_addcoin(?)
+  </select>
+
+
+</mapper>
