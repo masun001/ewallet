@@ -2,6 +2,7 @@
 *.class
 .idea/
 webserver/webserver.iml
+.DS_Store
 
 # Log file
 *.log
